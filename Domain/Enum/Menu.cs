@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CRUDFinal.Domain.Enum
+﻿namespace CRUDFinal.Domain.Enum
 {
     public enum Menu
     {
         NA = 0,
-        Adicionar = 1,
-        Vender = 2,
+        Add = 1,
+        Venda = 2,
         Update = 3,
-        Devolver = 4,
-        Listar = 5
+        Devolucao = 4,
+        List = 5
     }
 }

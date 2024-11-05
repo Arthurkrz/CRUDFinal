@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CRUDFinal.Domain.Entities;
-using CRUDFinal.Domain.Contracts.RepositoryContract;
+﻿using CRUDFinal.Domain.Entities;
 using CRUDFinal.Domain.Enum;
+using System;
+using System.Collections.Generic;
 
 namespace CRUDFinal.Domain.Contracts.ServiceContract
 {
@@ -17,7 +15,8 @@ namespace CRUDFinal.Domain.Contracts.ServiceContract
         public Motocicleta GetMotocicleta(int id, bool vendida);
         public bool CheckMotocicleta(int id, bool vendida);
         public void Update(Motocicleta moto, Motocicleta m, bool vendida);
-        public void List();
-        public Motocicleta DownCast(MotocicletaVendida motoVendida);
+        public List<Motocicleta> List();
+        public List<Motocicleta> ListVenda();
+        public Motocicleta DownCast(Motocicleta motoVendida);
     }
 }

@@ -7,7 +7,7 @@ namespace CRUDFinal.Domain.Enum
     public enum Opcao
     {
         NA = 0,
-        Sim = 1,
-        Nao = 2
+        Sim = 's',
+        Nao = 'n'
     }
 }

@@ -3,6 +3,7 @@ using CRUDFinal.Domain.Contracts.ServiceContract;
 using CRUDFinal.Domain.Entities;
 using CRUDFinal.Domain.Enum;
 using System;
+using System.Collections.Generic;
 
 namespace CRUDFinal.Service
 {
@@ -78,11 +79,15 @@ namespace CRUDFinal.Service
                 _motocicletaRepository.Update(moto, m);
             }
         }
-        public void List()
+        public List<Motocicleta> List()
         {
-            _motocicletaRepository.List();
+            return _motocicletaRepository.List();
         }
-        public Motocicleta DownCast(MotocicletaVendida motoVendida)
+        public List<Motocicleta> ListVenda()
+        {
+            return _motocicletaRepository.ListVenda();
+        }
+        public Motocicleta DownCast(Motocicleta motoVendida)
         {
             Motocicleta motocicleta = new Motocicleta
             {

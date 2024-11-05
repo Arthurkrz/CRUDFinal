@@ -1,7 +1,5 @@
-﻿using System;
+﻿using CRUDFinal.Domain.Entities;
 using System.Collections.Generic;
-using System.Text;
-using CRUDFinal.Domain.Entities;
 
 namespace CRUDFinal.Domain.Contracts.RepositoryContract
 {
@@ -18,5 +16,6 @@ namespace CRUDFinal.Domain.Contracts.RepositoryContract
         public void Update(Motocicleta moto, Motocicleta m);
         public void UpdateVendida(Motocicleta moto, Motocicleta mv);
         public List<Motocicleta> List();
+        public List<Motocicleta> ListVenda();
     }
 }

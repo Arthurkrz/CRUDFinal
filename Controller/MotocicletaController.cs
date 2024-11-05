@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CRUDFinal.Domain.Contracts.ServiceContract;
 using CRUDFinal.Domain.Entities;
 using CRUDFinal.Domain.Enum;
-using CRUDFinal.Service;
-using CRUDFinal.Domain.Contracts.ServiceContract;
+using System;
+using System.Collections.Generic;
 
 namespace CRUDFinal.Controller
 {
@@ -13,7 +13,7 @@ namespace CRUDFinal.Controller
         {
             _motocicletaService = motocicletaService;
         }
-        public void Add(string marca, string modelo, int ano,
+        public bool Add(string marca, string modelo, int ano,
                         TipoAutomovel tipo, Opcao bemCuidado,
                         int kilometragem)
         {
@@ -21,11 +21,9 @@ namespace CRUDFinal.Controller
             {
                 _motocicletaService.Add(marca, modelo, ano, tipo,
                                         bemCuidado, kilometragem);
+                return true;
             }
-            else
-            {
-                Console.WriteLine("Ocorreu um erro.");
-            }
+            return false;
         }
         public void Venda(Motocicleta moto, DateTime dataVenda, int preco)
         {
@@ -47,9 +45,13 @@ namespace CRUDFinal.Controller
         {
             return _motocicletaService.CheckMotocicleta(id, vendida) != null;
         }
-        public void List()
+        public List<Motocicleta> List()
         {
-            _motocicletaService.List();
+            return _motocicletaService.List();
+        }
+        public List<Motocicleta> ListVenda()
+        {
+            return _motocicletaService.ListVenda();
         }
         public bool Valid(string marca, string modelo, int ano)
         {
@@ -58,6 +60,10 @@ namespace CRUDFinal.Controller
                 return true;
             }
             return false;
+        }
+        public Motocicleta DownCast(Motocicleta motoVendida)
+        {
+            return _motocicletaService.DownCast(motoVendida);
         }
     }
 }

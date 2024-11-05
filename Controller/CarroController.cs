@@ -1,8 +1,8 @@
-﻿using System;
+﻿using CRUDFinal.Domain.Contracts.ServiceContract;
 using CRUDFinal.Domain.Entities;
 using CRUDFinal.Domain.Enum;
-using CRUDFinal.Service;
-using CRUDFinal.Domain.Contracts.ServiceContract;
+using System;
+using System.Collections.Generic;
 
 namespace CRUDFinal.Controller
 {
@@ -13,42 +13,45 @@ namespace CRUDFinal.Controller
         {
             _carroService = carroService;
         }
-        public void Add(string marca, string modelo, int ano, TipoAutomovel tipo,
-                        Opcao automatico, Opcao bemCuidado, int kilometragem)
+        public bool Add(string marca, string modelo, int ano, 
+                        TipoAutomovel tipo, Opcao bemCuidado,
+                        Opcao automatico, int kilometragem)
         {
             if (Valid(marca, modelo, ano))
             {
                 _carroService.Add(marca, modelo, ano, tipo, automatico,
                                   bemCuidado, kilometragem);
+                return true;
             }
-            else
-            {
-                Console.WriteLine("Ocorreu um erro.");
-            }
+                return false;
         }
-        public void Venda(int id)
+        public void Venda(Carro carro, DateTime dataVenda, int preco)
         {
-            // ISSO NÃO FAZ SENTIDO TROCA NO PROGRAM
-            if (_carroService.CheckCarro(id))
-            {
-                _carroService.Venda(id);
-            }
-            else
-            {
-                Console.WriteLine("O ID inserido não" +
-                    " corresponde a nenhum carro.");
-            }
+            _carroService.Venda(carro, dataVenda, preco);
         }
-        public void Update(Carro carro, string marca, string modelo, int ano,
-                           TipoAutomovel tipo, Opcao automatico,
-                           Opcao bemCuidado, int kilometragem)
+        public void Devolucao(CarroVendido cv)
         {
-            _carroService.Update(carro, marca, modelo, ano, tipo,
-                                 automatico, bemCuidado, kilometragem);
+            _carroService.Devolucao(cv);
         }
-        public void List()
+        public void Update(Carro carro, Carro c, bool vendido)
         {
-            _carroService.List();
+            _carroService.Update(carro, c, vendido);
+        }
+        public Carro GetCarro(int id, bool vendido)
+        {
+            return _carroService.GetCarro(id, vendido);
+        }
+        public bool CheckCarro(int id, bool vendido)
+        {
+            return _carroService.CheckCarro(id, vendido) != null;
+        }
+        public List<Carro> List()
+        {
+            return _carroService.List();
+        }
+        public List<Carro> ListVenda()
+        {
+            return _carroService.ListVenda();
         }
         public bool Valid(string marca, string modelo, int ano)
         {
@@ -57,6 +60,10 @@ namespace CRUDFinal.Controller
                 return true;
             }
             return false;
+        }
+        public Carro DownCast(Carro carroVendido)
+        {
+            return _carroService.DownCast(carroVendido);
         }
     }
 }

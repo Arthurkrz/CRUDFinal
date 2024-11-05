@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CRUDFinal.Domain.Contracts.RepositoryContract;
 using CRUDFinal.Domain.Entities;
+using System.Collections.Generic;
 using System.Linq;
-using CRUDFinal.Domain.Contracts.RepositoryContract;
 
 namespace CRUDFinal.Repository
 {
@@ -52,6 +52,10 @@ namespace CRUDFinal.Repository
         public List<Motocicleta> List()
         {
             return _motos;
+        }
+        public List<Motocicleta> ListVenda()
+        {
+            return _motosVendidas;
         }
     }
 }
