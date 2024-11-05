@@ -9,11 +9,12 @@ namespace CRUDFinal
     {
         static void Main(string[] args)
         {
+            Startup.DependencyInjection();
             Console.WriteLine("Bem vindo ao Sistema de Venda de Automóveis!\n\n" +
                 "Selecione o dígito da operação a ser realizada:\n\n" +
-                "1 - Adicionar veículo;\n2 - Vender veículo;\n" +
+                "1 - Adicionar veículo;\n2 - Vender veículo;\n" + // 2 - downcast
                 "3 - Alterar informações de veículo;\n" +
-                "4 - Devolver veículo;\n" +
+                "4 - Devolver veículo;\n" + // 4 - upcast
                 "5 - Listar veículos;\n" +
                 "6 - Sair.");
             if (Enum.TryParse<Menu>(Console.ReadLine(), true, out Menu menu))
@@ -72,6 +73,14 @@ namespace CRUDFinal
                                         int kilometragem = int.Parse(Console.ReadLine());
                                         CarroController.Add(marca, modelo, ano, tipo, automatico, bemCuidado, kilometragem);
                                     }
+                                    else
+                                    {
+                                    Console.WriteLine("Ocorreu um erro.");
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Ocorreu um erro.");
                                 }
                                 break;
                             case TipoAutomovel.Motocicleta:
@@ -82,4 +91,14 @@ namespace CRUDFinal
             }
         }
     }
+}
+if (CheckMotocicleta(id, vendida))
+{
+    Motocicleta moto = GetMotocicleta(id, vendida);
+    _motocicletaRepository.Update(moto, m);
+}
+else
+{
+    Console.WriteLine("O ID inserido não" +
+        " corresponde a nenhuma motocicleta.");
 }

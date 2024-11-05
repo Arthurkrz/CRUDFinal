@@ -1,18 +1,21 @@
-﻿using CRUDFinal.Domain.Contracts.ServiceContract;
+﻿using CRUDFinal.Domain.Contracts.RepositoryContract;
+using CRUDFinal.Domain.Contracts.ServiceContract;
 using CRUDFinal.Domain.Entities;
 using CRUDFinal.Domain.Enum;
-using CRUDFinal.Repository;
+using System;
 
 namespace CRUDFinal.Service
 {
     public class MotocicletaService : IMotocicletaService
     {
-        private MotocicletaRepository _motocicletaRepository;
-        public void Add(string marca,
-                        string modelo,
-                        int ano,
-                        TipoAutomovel tipo,
-                        bool bemCuidado,
+        private readonly IMotocicletaRepository _motocicletaRepository;
+        public MotocicletaService(IMotocicletaRepository motocicletaRepository)
+        {
+            _motocicletaRepository = motocicletaRepository;
+        }
+
+        public void Add(string marca, string modelo, int ano,
+                        TipoAutomovel tipo, Opcao bemCuidado,
                         int kilometragem)
         {
             Motocicleta moto = new Motocicleta()
@@ -24,42 +27,73 @@ namespace CRUDFinal.Service
                 BemCuidado = bemCuidado,
                 Kilometragem = kilometragem
             };
+
             _motocicletaRepository.Add(moto);
         }
-        public void Delete(int id)
+        public void Venda(Motocicleta moto, DateTime dataVenda, int preco)
         {
-            _motocicletaRepository.Delete(id);
-        }
-        public void GetMotocicleta(int id)
-        {
-            _motocicletaRepository.GetMotocicleta(id);
-        }
-        public bool CheckMotocicleta(int id)
-        {
-            return _motocicletaRepository.GetMotocicleta(id) != null;
-        }
-        public void Update(Motocicleta moto,
-                           string marca,
-                           string modelo,
-                           int ano,
-                           TipoAutomovel tipo,
-                           bool bemCuidado,
-                           int kilometragem)
-        {
-            Motocicleta m = new Motocicleta()
+            _motocicletaRepository.DeleteMoto(moto.ID);
+            moto = new MotocicletaVendida()
             {
-                Marca = marca,
-                Modelo = modelo,
-                Ano = ano,
-                Tipo = tipo,
-                BemCuidado = bemCuidado,
-                Kilometragem = kilometragem
+                DataVenda = dataVenda,
+                Preco = preco
             };
-            _motocicletaRepository.Update(moto, m);
+            _motocicletaRepository.AddVendido(moto);
+        }
+        public void Devolucao(MotocicletaVendida mv)
+        {
+            _motocicletaRepository.Add(DownCast(mv));
+            _motocicletaRepository.DeleteMotoVendida(mv.ID);
+        }
+        public Motocicleta GetMotocicleta(int id, bool vendida)
+        {
+            if (vendida == true)
+            {
+                return _motocicletaRepository.GetMotocicletaVendida(id);
+            }
+            else
+            {
+                return _motocicletaRepository.GetMotocicleta(id);
+            }
+        }
+        public bool CheckMotocicleta(int id, bool vendida)
+        {
+            if (vendida == true)
+            {
+                return _motocicletaRepository.CheckMotocicletaVendida(id) != null;
+            }
+            else
+            {
+                return _motocicletaRepository.CheckMotocicleta(id) != null;
+            }
+        }
+        public void Update(Motocicleta moto, Motocicleta m, bool vendida)
+        {
+            if (vendida == true)
+            {
+                _motocicletaRepository.UpdateVendida(moto, m);
+            }
+            else
+            {
+                _motocicletaRepository.Update(moto, m);
+            }
         }
         public void List()
         {
             _motocicletaRepository.List();
+        }
+        public Motocicleta DownCast(MotocicletaVendida motoVendida)
+        {
+            Motocicleta motocicleta = new Motocicleta
+            {
+                Marca = motoVendida.Marca,
+                Modelo = motoVendida.Modelo,
+                Ano = motoVendida.Ano,
+                Tipo = motoVendida.Tipo,
+                BemCuidado = motoVendida.BemCuidado,
+                Kilometragem = motoVendida.Kilometragem
+            };
+            return motocicleta;
         }
     }
 }

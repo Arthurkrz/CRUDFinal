@@ -2,79 +2,56 @@
 using CRUDFinal.Domain.Entities;
 using CRUDFinal.Domain.Enum;
 using CRUDFinal.Service;
+using CRUDFinal.Domain.Contracts.ServiceContract;
 
 namespace CRUDFinal.Controller
 {
     public class MotocicletaController
     {
-        private MotocicletaService _motocicletaService;
-        public MotocicletaController()
+        private readonly IMotocicletaService _motocicletaService;
+        public MotocicletaController(IMotocicletaService motocicletaService)
         {
-            _motocicletaService = new MotocicletaService();
+            _motocicletaService = motocicletaService;
         }
-        public void Add(string marca,
-                        string modelo,
-                        int ano,
-                        TipoAutomovel tipo,
-                        bool bemCuidado,
+        public void Add(string marca, string modelo, int ano,
+                        TipoAutomovel tipo, Opcao bemCuidado,
                         int kilometragem)
         {
             if (Valid(marca, modelo, ano))
             {
-                _motocicletaService.Add(marca,
-                                  modelo,
-                                  ano,
-                                  tipo,
-                                  bemCuidado,
-                                  kilometragem);
+                _motocicletaService.Add(marca, modelo, ano, tipo,
+                                        bemCuidado, kilometragem);
             }
             else
             {
                 Console.WriteLine("Ocorreu um erro.");
             }
         }
-        public void Delete(int id)
+        public void Venda(Motocicleta moto, DateTime dataVenda, int preco)
         {
-            // ISSO NÃO FAZ SENTIDO TROCA NO PROGRAM
-            if (CheckMotocicleta(id))
-            {
-                _motocicletaService.Delete(id);
-            }
-            else
-            {
-                Console.WriteLine("O ID inserido não" +
-                    " corresponde a nenhuma motocicleta.");
-            }
+            _motocicletaService.Venda(moto, dataVenda, preco);
         }
-        public void GetMotocicleta(int id)
+        public void Devolucao(MotocicletaVendida mv)
         {
-            _motocicletaService.GetMotocicleta(id);
+            _motocicletaService.Devolucao(mv);
         }
-        public bool CheckMotocicleta(int id)
+        public void Update(Motocicleta moto, Motocicleta m, bool vendida)
         {
-            if (_motocicletaService.CheckMotocicleta(id))
-            {
-                return true;
-            }
-            return false;
+            _motocicletaService.Update(moto, m, vendida);
         }
-        public void Update(Motocicleta moto,
-                           string marca,
-                           string modelo,
-                           int ano,
-                           TipoAutomovel tipo,
-                           bool bemCuidado,
-                           int kilometragem)
+        public Motocicleta GetMotocicleta(int id, bool vendida)
         {
-            _motocicletaService.Update(moto, marca, modelo, ano, tipo, bemCuidado, kilometragem);
+            return _motocicletaService.GetMotocicleta(id, vendida);
+        }
+        public bool CheckMotocicleta(int id, bool vendida)
+        {
+            return _motocicletaService.CheckMotocicleta(id, vendida) != null;
         }
         public void List()
         {
             _motocicletaService.List();
         }
-        public bool Valid(string marca,
-                          string modelo,
-                          int ano)
+        public bool Valid(string marca, string modelo, int ano)
         {
             if (marca != null && modelo != null && ano > 0)
             {

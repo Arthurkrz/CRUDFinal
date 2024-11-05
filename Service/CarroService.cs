@@ -2,19 +2,20 @@
 using CRUDFinal.Repository;
 using CRUDFinal.Domain.Contracts.ServiceContract;
 using CRUDFinal.Domain.Enum;
+using CRUDFinal.Domain.Contracts.RepositoryContract;
 
 namespace CRUDFinal.Service
 {
     public class CarroService : ICarroService
     {
-        private CarroRepository _carroRepository;
-        public void Add(string marca,
-                        string modelo,
-                        int ano,
-                        TipoAutomovel tipo,
-                        Opcao automatico,
-                        Opcao bemCuidado,
-                        int kilometragem)
+        private readonly ICarroRepository _carroRepository;
+        public CarroService(ICarroRepository carroRepository)
+        {
+            _carroRepository = carroRepository;
+        }
+        public void Add(string marca, string modelo, int ano,
+                        TipoAutomovel tipo, Opcao automatico,
+                        Opcao bemCuidado, int kilometragem)
         {
             Carro carro = new Carro()
             {
@@ -28,9 +29,9 @@ namespace CRUDFinal.Service
             };
             _carroRepository.Add(carro);
         }
-        public void Delete(int id)
+        public void Venda(int id)
         {
-            _carroRepository.Delete(id);
+            _carroRepository.Venda(id);
         }
         public void GetCarro(int id)
         {
@@ -40,14 +41,9 @@ namespace CRUDFinal.Service
         {
             return _carroRepository.GetCarro(id) != null;
         }
-        public void Update(Carro carro,
-                           string marca,
-                           string modelo,
-                           int ano,
-                           TipoAutomovel tipo,
-                           bool automatico,
-                           bool bemCuidado,
-                           int kilometragem)
+        public void Update(Carro carro, string marca, string modelo, int ano,
+                           TipoAutomovel tipo, Opcao automatico,
+                           Opcao bemCuidado, int kilometragem)
         {
             Carro c = new Carro()
             {

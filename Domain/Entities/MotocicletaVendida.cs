@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CRUDFinal.Domain.Enum;
 
 namespace CRUDFinal.Domain.Entities
 {
-    class VeiculoVendido : Veiculo
+    public class MotocicletaVendida : Motocicleta
     {
         public DateTime DataVenda { get; set; }
         public double Preco { get; set; }
