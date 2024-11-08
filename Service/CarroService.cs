@@ -10,84 +10,113 @@ namespace CRUDFinal.Service
     public class CarroService : ICarroService
     {
         private readonly ICarroRepository _carroRepository;
+
         public CarroService(ICarroRepository carroRepository)
         {
             _carroRepository = carroRepository;
         }
-        public void Add(string marca, string modelo, int ano,
-                        TipoAutomovel tipo, Opcao automatico,
-                        Opcao bemCuidado, int kilometragem)
-        {
-            Carro carro = new Carro()
-            {
-                Marca = marca,
-                Modelo = modelo,
-                Ano = ano,
-                Tipo = tipo,
-                Automatico = automatico,
-                BemCuidado = bemCuidado,
-                Kilometragem = kilometragem
-            };
 
+        public void Add(Carro carro)
+        {
+            // logic
             _carroRepository.Add(carro);
         }
-        public void Venda(Carro carro, DateTime dataVenda, int preco)
+
+        public void Venda(CarroVendido carroVendido)
         {
-            _carroRepository.DeleteCarro(carro.ID);
-            carro = new CarroVendido()
-            {
-                DataVenda = dataVenda,
-                Preco = preco
-            };
-            _carroRepository.AddVendido(carro);
+            // logic
+            _carroRepository.AddVendido(carroVendido);
+            _carroRepository.DeleteCarro(carroVendido.ID);
         }
-        public void Devolucao(CarroVendido cv)
+
+        public void Devolucao(Carro carro)
         {
-            _carroRepository.Add(DownCast(cv));
-            _carroRepository.DeleteCarroVendido(cv.ID);
+            // logic
+            _carroRepository.Add(carro);
+            _carroRepository.DeleteCarroVendido(carro.ID);
         }
-        public Carro GetCarro(int id, bool vendido)
+
+        public Carro GetCarro(int id)
         {
-            if (vendido == true)
-            {
-                return _carroRepository.GetCarroVendido(id);
-            }
-            else
-            {
-                return _carroRepository.GetCarro(id);
-            }
+            return _carroRepository.GetCarroVendido(id);
         }
+
+        public CarroVendido GetCarroVendido(int id)
+        {
+            return _carroRepository.GetCarroVendido(id);
+        }
+
         public bool CheckCarro(int id, bool vendido)
         {
             if (vendido == true)
             {
-                return _carroRepository.CheckCarroVendido(id) != null;
+                return _carroRepository.CheckCarroVendido(id) != false;
             }
+
             else
             {
-                return _carroRepository.CheckCarro(id) != null;
+                return _carroRepository.CheckCarro(id) != false;
             }
         }
-        public void Update(Carro carro, Carro c, bool vendido)
+
+        public void Update(Carro carroNovo, int id)
         {
-            if (vendido == true)
+            if (CheckCarro(id, false))
             {
-                _carroRepository.UpdateVendido(carro, c);
+                Carro carroOriginal = GetCarro(id);
+                _carroRepository.Update(carroNovo, carroOriginal);
+                Console.WriteLine("Carro atualizado com sucesso!");
             }
             else
             {
-                _carroRepository.Update(carro, c);
+                Console.WriteLine("O ID inserido não corresponde " +
+                                  "a nenhum carro.");
             }
         }
+
+        public void UpdateVendido(Carro carroNovoVendido, int id)
+        {
+            if (CheckCarro(id, true))
+            {
+                Carro carroOriginalVendido = GetCarroVendido(id);
+                _carroRepository.UpdateVendido(carroNovoVendido, 
+                                               carroOriginalVendido);
+                Console.WriteLine("Registro de venda atualizado com sucesso!");
+            }
+            else
+            {
+                Console.WriteLine("O ID inserido não corresponde " +
+                                  "a registro de carro vendido.");
+            }
+        }
+
         public List<Carro> List()
         {
             return _carroRepository.List();
         }
-        public List<Carro> ListVenda()
+
+        public List<CarroVendido> ListVenda()
         {
             return _carroRepository.ListVenda();
         }
-        public Carro DownCast(Carro carroVendido)
+
+        public CarroVendido DownCast(Carro carro, DateTime dataVenda, int preco)
+        {
+            CarroVendido carroVendido = new CarroVendido
+            {
+                Marca = carro.Marca,
+                Modelo = carro.Modelo,
+                Ano = carro.Ano,
+                Tipo = carro.Tipo,
+                DataVenda = dataVenda,
+                Preco = preco
+            };
+
+            return carroVendido;
+        }
+
+        public Carro UpCast(CarroVendido carroVendido, Opcao automatico, 
+                            Opcao bemCuidado, int km)
         {
             Carro carro = new Carro
             {
@@ -95,9 +124,11 @@ namespace CRUDFinal.Service
                 Modelo = carroVendido.Modelo,
                 Ano = carroVendido.Ano,
                 Tipo = carroVendido.Tipo,
-                BemCuidado = carroVendido.BemCuidado,
-                Kilometragem = carroVendido.Kilometragem
+                Automatico = automatico,
+                BemCuidado = bemCuidado,
+                Kilometragem = km
             };
+
             return carro;
         }
     }

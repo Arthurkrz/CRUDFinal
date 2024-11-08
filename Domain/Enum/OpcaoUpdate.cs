@@ -10,6 +10,10 @@ namespace CRUDFinal.Domain.Enum
         Modelo = 2,
         Ano = 3,
         Kilometragem = 4,
-        Fim = 5
+        BemCuidado = 5,
+        Automatico = 6,
+        DataVenda = 7,
+        Preco = 8,
+        Fim = 9
     }
 }

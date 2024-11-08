@@ -9,61 +9,122 @@ namespace CRUDFinal.Controller
     public class MotocicletaController
     {
         private readonly IMotocicletaService _motocicletaService;
+
         public MotocicletaController(IMotocicletaService motocicletaService)
         {
             _motocicletaService = motocicletaService;
         }
-        public bool Add(string marca, string modelo, int ano,
+
+        public void Add(string marca, string modelo, int ano,
                         TipoAutomovel tipo, Opcao bemCuidado,
-                        int kilometragem)
+                        int km)
         {
             if (Valid(marca, modelo, ano))
             {
-                _motocicletaService.Add(marca, modelo, ano, tipo,
-                                        bemCuidado, kilometragem);
-                return true;
+                Motocicleta moto = new Motocicleta()
+                {
+                    Marca = marca,
+                    Modelo = modelo,
+                    Ano = ano,
+                    Tipo = tipo,
+                    BemCuidado = bemCuidado,
+                    Kilometragem = km
+                };
+
+                _motocicletaService.Add(moto);
             }
-            return false;
+
         }
-        public void Venda(Motocicleta moto, DateTime dataVenda, int preco)
+
+        public void Venda(int id, DateTime dataVenda, int preco)
         {
-            _motocicletaService.Venda(moto, dataVenda, preco);
+            var moto = GetMotocicleta(id);
+            var motoVendida = DownCast(moto, dataVenda, preco);
+            _motocicletaService.Venda(motoVendida);
         }
-        public void Devolucao(MotocicletaVendida mv)
+
+        public void Devolucao(int id, Opcao bemCuidado, int km)
         {
-            _motocicletaService.Devolucao(mv);
+            var motoVendida = GetMotocicletaVendida(id);
+            var moto = UpCast(motoVendida, bemCuidado, km);
+            _motocicletaService.Devolucao(moto);
         }
-        public void Update(Motocicleta moto, Motocicleta m, bool vendida)
+
+        public void Update(int id, string marca, string modelo, 
+                           int ano, Opcao bemCuidado, int km)
         {
-            _motocicletaService.Update(moto, m, vendida);
+            Motocicleta moto = new Motocicleta()
+            {
+                Marca = marca,
+                Modelo = modelo,
+                Ano = ano,
+                BemCuidado = bemCuidado,
+                Kilometragem = km
+            };
+
+            _motocicletaService.Update(moto, id);
         }
-        public Motocicleta GetMotocicleta(int id, bool vendida)
+
+        public void UpdateVendida(int id, string marca, string modelo, int ano, 
+                                  DateTime dataVenda, int preco)
         {
-            return _motocicletaService.GetMotocicleta(id, vendida);
+            MotocicletaVendida motoVendida = new MotocicletaVendida()
+            {
+                Marca = marca,
+                Modelo = modelo,
+                Ano = ano,
+                DataVenda = dataVenda,
+                Preco = preco
+            };
+
+            _motocicletaService.UpdateVendida(motoVendida, id);
         }
+
+        public Motocicleta GetMotocicleta(int id)
+        {
+            return _motocicletaService.GetMotocicleta(id);
+        }
+
+        public MotocicletaVendida GetMotocicletaVendida(int id)
+        {
+            return _motocicletaService.GetMotocicletaVendida(id);
+        }
+
         public bool CheckMotocicleta(int id, bool vendida)
         {
-            return _motocicletaService.CheckMotocicleta(id, vendida) != null;
+            return _motocicletaService.CheckMotocicleta(id, vendida) != false;
         }
+
         public List<Motocicleta> List()
         {
             return _motocicletaService.List();
         }
-        public List<Motocicleta> ListVenda()
+
+        public List<MotocicletaVendida> ListVenda()
         {
             return _motocicletaService.ListVenda();
         }
+
         public bool Valid(string marca, string modelo, int ano)
         {
             if (marca != null && modelo != null && ano > 0)
             {
                 return true;
             }
+
             return false;
         }
-        public Motocicleta DownCast(Motocicleta motoVendida)
+
+        public MotocicletaVendida DownCast(Motocicleta moto, DateTime dataVenda, int preco)
         {
-            return _motocicletaService.DownCast(motoVendida);
+            return _motocicletaService.DownCast(moto, dataVenda, preco);
         }
+
+        public Motocicleta UpCast(MotocicletaVendida motoVendida, 
+                                  Opcao bemCuidada, int km)
+        {
+            return _motocicletaService.UpCast(motoVendida, bemCuidada, km);
+        }
+
     }
 }

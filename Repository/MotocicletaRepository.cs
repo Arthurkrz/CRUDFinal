@@ -7,55 +7,74 @@ namespace CRUDFinal.Repository
 {
     public class MotocicletaRepository : IMotocicletaRepository
     {
-        private static List<Motocicleta> _motosVendidas = new List<Motocicleta>();
-        private static List<Motocicleta> _motos = new List<Motocicleta>();
+        private static readonly List<MotocicletaVendida> _motosVendidas = new List<MotocicletaVendida>();
+        private static int _motosVendidasCounter = 1;
+
+        private static readonly List<Motocicleta> _motos = new List<Motocicleta>();
+        private static int _motosCounter = 1;
+
         public void Add(Motocicleta moto)
         {
+            moto.ID = _motosCounter++;
             _motos.Add(moto);
         }
-        public void AddVendido(Motocicleta motoVendida)
+
+        public void AddVendida(MotocicletaVendida motoVendida)
         {
+            motoVendida.ID = _motosVendidasCounter++;
             _motosVendidas.Add(motoVendida);
         }
-        public void DeleteMoto(int id)
+
+        public void DeleteMotocicleta(int id)
         {
             _motos.Remove(_motos[id]);
         }
-        public void DeleteMotoVendida(int id)
+
+        public void DeleteMotocicletaVendida(int id)
         {
             _motosVendidas.Remove(_motosVendidas[id]);
         }
-        public Motocicleta CheckMotocicletaVendida(int id)
+
+        public bool CheckMotocicletaVendida(int id)
         {
-            return _motosVendidas.Find(mv => mv.ID == id);
+            return _motosVendidas.Any(mv => mv.ID == id);
         }
-        public Motocicleta GetMotocicletaVendida(int id)
+
+        public MotocicletaVendida GetMotocicletaVendida(int id)
         {
             return _motosVendidas.FirstOrDefault(mv => mv.ID == id);
         }
+
         public Motocicleta GetMotocicleta(int id)
         {
             return _motos.FirstOrDefault(m => m.ID == id);
         }
-        public Motocicleta CheckMotocicleta(int id)
+
+        public bool CheckMotocicleta(int id)
         {
-            return _motos.Find(m => m.ID == id);
+            return _motos.Any(m => m.ID == id);
         }
-        public void Update(Motocicleta moto, Motocicleta m)
+
+        public void Update(Motocicleta motoNova, Motocicleta motoOriginal)
         {
-            m = _motos.FirstOrDefault(m => m.ID == moto.ID);
+            motoOriginal = _motos.FirstOrDefault(m => m.ID == motoNova.ID);
         }
-        public void UpdateVendida(Motocicleta moto, Motocicleta mv)
+
+        public void UpdateVendida(Motocicleta motoNovaVendida, 
+                                  Motocicleta motoOriginalVendida)
         {
-            mv = _motosVendidas.FirstOrDefault(mv => mv.ID == moto.ID);
+            motoOriginalVendida = _motosVendidas.FirstOrDefault
+                                  (mv => mv.ID == motoNovaVendida.ID);
         }
+
         public List<Motocicleta> List()
         {
             return _motos;
         }
-        public List<Motocicleta> ListVenda()
+        public List<MotocicletaVendida> ListVenda()
         {
             return _motosVendidas;
         }
+
     }
 }

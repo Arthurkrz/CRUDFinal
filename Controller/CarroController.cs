@@ -9,61 +9,125 @@ namespace CRUDFinal.Controller
     public class CarroController
     {
         private readonly ICarroService _carroService;
+
         public CarroController(ICarroService carroService)
         {
             _carroService = carroService;
         }
-        public bool Add(string marca, string modelo, int ano, 
+
+        public void Add(string marca, string modelo, int ano,
                         TipoAutomovel tipo, Opcao bemCuidado,
-                        Opcao automatico, int kilometragem)
+                        Opcao automatico, int km)
         {
             if (Valid(marca, modelo, ano))
             {
-                _carroService.Add(marca, modelo, ano, tipo, automatico,
-                                  bemCuidado, kilometragem);
-                return true;
+                Carro carro = new Carro()
+                {
+                    Marca = marca,
+                    Modelo = modelo,
+                    Ano = ano,
+                    Tipo = tipo,
+                    Automatico = automatico,
+                    BemCuidado = bemCuidado,
+                    Kilometragem = km
+                };
+
+                _carroService.Add(carro);
             }
-                return false;
+
         }
-        public void Venda(Carro carro, DateTime dataVenda, int preco)
+
+        public void Venda(int id, DateTime dataVenda, int preco)
         {
-            _carroService.Venda(carro, dataVenda, preco);
+            var carro = GetCarro(id);
+            var carroVendido = DownCast(carro, dataVenda, preco);
+            _carroService.Venda(carroVendido);
         }
-        public void Devolucao(CarroVendido cv)
+
+        public void Devolucao(int id, Opcao automatico, Opcao bemCuidado, 
+                              int km)
         {
-            _carroService.Devolucao(cv);
+            var carroVendido = GetCarroVendido(id);
+            var carro = UpCast(carroVendido, automatico, bemCuidado, km);
+            _carroService.Devolucao(carro);
         }
-        public void Update(Carro carro, Carro c, bool vendido)
+
+        public void Update(int id, string marca, string modelo, int ano, 
+                           Opcao bemCuidado, Opcao automatico, int km)
         {
-            _carroService.Update(carro, c, vendido);
+            Carro carro = new Carro()
+            {
+                Marca = marca,
+                Modelo = modelo,
+                Ano = ano,
+                BemCuidado = bemCuidado,
+                Automatico = automatico,
+                Kilometragem = km
+            };
+
+            _carroService.Update(carro, id);
         }
-        public Carro GetCarro(int id, bool vendido)
+
+        public void UpdateVendido(int id, string marca, string modelo, int ano, 
+                                  DateTime dataVenda, int preco)
         {
-            return _carroService.GetCarro(id, vendido);
+            CarroVendido carroVendido = new CarroVendido()
+            {
+                Marca = marca,
+                Modelo = modelo,
+                Ano = ano,
+                DataVenda = dataVenda,
+                Preco = preco
+            };
+
+            _carroService.UpdateVendido(carroVendido, id);
         }
+
+        public Carro GetCarro(int id)
+        {
+            return _carroService.GetCarro(id);
+        }
+
+        public CarroVendido GetCarroVendido(int id)
+        {
+            return _carroService.GetCarroVendido(id);
+        }
+
         public bool CheckCarro(int id, bool vendido)
         {
-            return _carroService.CheckCarro(id, vendido) != null;
+            return _carroService.CheckCarro(id, vendido) != false;
         }
+
         public List<Carro> List()
         {
             return _carroService.List();
         }
-        public List<Carro> ListVenda()
+
+        public List<CarroVendido> ListVenda()
         {
             return _carroService.ListVenda();
         }
+
         public bool Valid(string marca, string modelo, int ano)
         {
             if (marca != null && modelo != null && ano > 0)
             {
                 return true;
             }
+
             return false;
         }
-        public Carro DownCast(Carro carroVendido)
+
+        public CarroVendido DownCast(Carro carro, DateTime dataVenda, int preco)
         {
-            return _carroService.DownCast(carroVendido);
+            return _carroService.DownCast(carro, dataVenda, preco);
         }
+
+        public Carro UpCast(CarroVendido carroVendido, Opcao automatico, 
+                            Opcao bemCuidado, int km)
+        {
+            return _carroService.UpCast(carroVendido, automatico, bemCuidado, km);
+        }
+
     }
 }

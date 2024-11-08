@@ -10,95 +10,124 @@ namespace CRUDFinal.Service
     public class MotocicletaService : IMotocicletaService
     {
         private readonly IMotocicletaRepository _motocicletaRepository;
+
         public MotocicletaService(IMotocicletaRepository motocicletaRepository)
         {
             _motocicletaRepository = motocicletaRepository;
         }
 
-        public void Add(string marca, string modelo, int ano,
-                        TipoAutomovel tipo, Opcao bemCuidado,
-                        int kilometragem)
+        public void Add(Motocicleta moto)
         {
-            Motocicleta moto = new Motocicleta()
-            {
-                Marca = marca,
-                Modelo = modelo,
-                Ano = ano,
-                Tipo = tipo,
-                BemCuidado = bemCuidado,
-                Kilometragem = kilometragem
-            };
-
+            // logic
             _motocicletaRepository.Add(moto);
         }
-        public void Venda(Motocicleta moto, DateTime dataVenda, int preco)
+
+        public void Venda(MotocicletaVendida motoVendida)
         {
-            _motocicletaRepository.DeleteMoto(moto.ID);
-            moto = new MotocicletaVendida()
-            {
-                DataVenda = dataVenda,
-                Preco = preco
-            };
-            _motocicletaRepository.AddVendido(moto);
+            // logic
+            _motocicletaRepository.AddVendida(motoVendida);
+            _motocicletaRepository.DeleteMotocicleta(motoVendida.ID);
         }
-        public void Devolucao(MotocicletaVendida mv)
+
+        public void Devolucao(Motocicleta moto)
         {
-            _motocicletaRepository.Add(DownCast(mv));
-            _motocicletaRepository.DeleteMotoVendida(mv.ID);
+            // logic
+            _motocicletaRepository.Add(moto);
+            _motocicletaRepository.DeleteMotocicletaVendida(moto.ID);
         }
-        public Motocicleta GetMotocicleta(int id, bool vendida)
+
+        public Motocicleta GetMotocicleta(int id)
         {
-            if (vendida == true)
-            {
-                return _motocicletaRepository.GetMotocicletaVendida(id);
-            }
-            else
-            {
-                return _motocicletaRepository.GetMotocicleta(id);
-            }
+            return _motocicletaRepository.GetMotocicleta(id);
         }
+
+        public MotocicletaVendida GetMotocicletaVendida(int id)
+        {
+            return _motocicletaRepository.GetMotocicletaVendida(id);
+        }
+
         public bool CheckMotocicleta(int id, bool vendida)
         {
             if (vendida == true)
             {
-                return _motocicletaRepository.CheckMotocicletaVendida(id) != null;
+                return _motocicletaRepository.CheckMotocicletaVendida(id) != false;
+            }
+
+            else
+            {
+                return _motocicletaRepository.CheckMotocicleta(id) != false;
+            }
+
+        }
+        public void Update(Motocicleta motoNova, int id)
+        {
+            if (CheckMotocicleta(id, false))
+            {
+                Motocicleta motoOriginal = GetMotocicleta(id);
+                _motocicletaRepository.Update(motoNova, motoOriginal);
+                Console.WriteLine("Motocicleta atualizada com sucesso!");
             }
             else
             {
-                return _motocicletaRepository.CheckMotocicleta(id) != null;
+                Console.WriteLine("O ID inserido não corresponde " +
+                    "a nenhuma motocicleta");
             }
         }
-        public void Update(Motocicleta moto, Motocicleta m, bool vendida)
+
+        public void UpdateVendida(Motocicleta motoNovaVendida, int id)
         {
-            if (vendida == true)
+            if (CheckMotocicleta(id, true))
             {
-                _motocicletaRepository.UpdateVendida(moto, m);
+                Motocicleta motoOriginalVendida = GetMotocicletaVendida(id);
+                _motocicletaRepository.UpdateVendida(motoNovaVendida,
+                                                     motoOriginalVendida);
             }
             else
             {
-                _motocicletaRepository.Update(moto, m);
+                Console.WriteLine("O ID inserido não corresponde " +
+                                  "a nenhum registro de motocicleta vendida.");
             }
         }
         public List<Motocicleta> List()
         {
             return _motocicletaRepository.List();
         }
-        public List<Motocicleta> ListVenda()
+
+        public List<MotocicletaVendida> ListVenda()
         {
             return _motocicletaRepository.ListVenda();
         }
-        public Motocicleta DownCast(Motocicleta motoVendida)
+
+        public MotocicletaVendida DownCast(Motocicleta moto, DateTime dataVenda, 
+                                           int preco)
         {
-            Motocicleta motocicleta = new Motocicleta
+            MotocicletaVendida motocicletaVendida = new MotocicletaVendida
+            {
+                Marca = moto.Marca,
+                Modelo = moto.Modelo,
+                Ano = moto.Ano,
+                Tipo = moto.Tipo,
+                BemCuidado = moto.BemCuidado,
+                Kilometragem = moto.Kilometragem
+            };
+
+            return motocicletaVendida;
+        }
+
+        public Motocicleta UpCast(MotocicletaVendida motoVendida, 
+                                  Opcao bemCuidada, int km)
+        {
+            Motocicleta moto = new Motocicleta
             {
                 Marca = motoVendida.Marca,
                 Modelo = motoVendida.Modelo,
                 Ano = motoVendida.Ano,
                 Tipo = motoVendida.Tipo,
-                BemCuidado = motoVendida.BemCuidado,
-                Kilometragem = motoVendida.Kilometragem
+                BemCuidado = bemCuidada,
+                Kilometragem = km
             };
-            return motocicleta;
+
+            return moto;
         }
     }
 }

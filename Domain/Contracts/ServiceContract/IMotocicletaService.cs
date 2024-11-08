@@ -7,16 +7,19 @@ namespace CRUDFinal.Domain.Contracts.ServiceContract
 {
     public interface IMotocicletaService
     {
-        public void Add(string marca, string modelo, int ano,
-                        TipoAutomovel tipo, Opcao bemCuidado,
-                        int kilometragem);
-        public void Venda(Motocicleta moto, DateTime dataVenda, int preco);
-        public void Devolucao(MotocicletaVendida mv);
-        public Motocicleta GetMotocicleta(int id, bool vendida);
+        public void Add(Motocicleta moto);
+        public void Venda(MotocicletaVendida motoVendida);
+        public void Devolucao(Motocicleta moto);
+        public Motocicleta GetMotocicleta(int id);
+        public MotocicletaVendida GetMotocicletaVendida(int id);
         public bool CheckMotocicleta(int id, bool vendida);
-        public void Update(Motocicleta moto, Motocicleta m, bool vendida);
+        public void Update(Motocicleta motoNova, int id);
+        public void UpdateVendida(Motocicleta motoNova, int id);
         public List<Motocicleta> List();
-        public List<Motocicleta> ListVenda();
-        public Motocicleta DownCast(Motocicleta motoVendida);
+        public List<MotocicletaVendida> ListVenda();
+        public MotocicletaVendida DownCast(Motocicleta moto, DateTime dataVenda,
+                                    int preco);
+        public Motocicleta UpCast(MotocicletaVendida motoVendida, 
+                                  Opcao bemCuidada, int km);
     }
 }
