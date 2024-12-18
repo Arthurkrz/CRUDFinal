@@ -4,6 +4,7 @@ using CRUDFinal.Repository;
 using CRUDFinal.Service;
 using CRUDFinal.Controller;
 using Microsoft.Extensions.DependencyInjection;
+using CRUDFinal.Domain.Entities;
 
 namespace CRUDFinal
 {
@@ -11,10 +12,16 @@ namespace CRUDFinal
     {
         public static void DependencyInjection(ServiceCollection services)
         {
-            services.AddScoped<ICarroRepository, CarroRepository>();
-            services.AddScoped<ICarroService, CarroService>();
-            services.AddScoped<IMotocicletaRepository, MotocicletaRepository>();
+
+            services.AddScoped<IRepository<Carro>, CarroRepository>();
+            services.AddScoped<IRepositoryVendido<CarroVendido>, CarroRepository>();
+
+            services.AddScoped<IRepository<Motocicleta>, MotocicletaRepository>();
+            services.AddScoped<IRepositoryVendido<MotocicletaVendida>, MotocicletaRepository>();
+            
             services.AddScoped<IMotocicletaService, MotocicletaService>();
+            services.AddScoped<ICarroService, CarroService>();
+            
             services.AddScoped<MotocicletaController>();
             services.AddScoped<CarroController>();
         }

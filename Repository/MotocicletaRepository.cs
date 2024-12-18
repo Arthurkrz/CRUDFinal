@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CRUDFinal.Repository
 {
-    public class MotocicletaRepository : IMotocicletaRepository
+    public class MotocicletaRepository : IRepository<Motocicleta>, IRepositoryVendido<MotocicletaVendida>
     {
         private static readonly List<MotocicletaVendida> _motosVendidas = new List<MotocicletaVendida>();
         private static int _motosVendidasCounter = 1;
@@ -19,38 +19,38 @@ namespace CRUDFinal.Repository
             _motos.Add(moto);
         }
 
-        public void AddVendida(MotocicletaVendida motoVendida)
+        public void AddVendido(MotocicletaVendida motoVendida)
         {
             motoVendida.ID = _motosVendidasCounter++;
             _motosVendidas.Add(motoVendida);
         }
 
-        public void DeleteMotocicleta(int id)
+        public void Delete(int id)
         {
             _motos.Remove(_motos[id]);
         }
 
-        public void DeleteMotocicletaVendida(int id)
+        public void DeleteVendido(int id)
         {
             _motosVendidas.Remove(_motosVendidas[id]);
         }
 
-        public bool CheckMotocicletaVendida(int id)
+        public bool CheckVendido(int id)
         {
             return _motosVendidas.Any(mv => mv.ID == id);
         }
 
-        public MotocicletaVendida GetMotocicletaVendida(int id)
+        public MotocicletaVendida GetVendido(int id)
         {
             return _motosVendidas.FirstOrDefault(mv => mv.ID == id);
         }
 
-        public Motocicleta GetMotocicleta(int id)
+        public Motocicleta Get(int id)
         {
             return _motos.FirstOrDefault(m => m.ID == id);
         }
 
-        public bool CheckMotocicleta(int id)
+        public bool Check(int id)
         {
             return _motos.Any(m => m.ID == id);
         }
@@ -60,8 +60,8 @@ namespace CRUDFinal.Repository
             motoOriginal = _motos.FirstOrDefault(m => m.ID == motoNova.ID);
         }
 
-        public void UpdateVendida(Motocicleta motoNovaVendida, 
-                                  Motocicleta motoOriginalVendida)
+        public void UpdateVendido(MotocicletaVendida motoNovaVendida, 
+                                  MotocicletaVendida motoOriginalVendida)
         {
             motoOriginalVendida = _motosVendidas.FirstOrDefault
                                   (mv => mv.ID == motoNovaVendida.ID);
@@ -75,6 +75,5 @@ namespace CRUDFinal.Repository
         {
             return _motosVendidas;
         }
-
     }
 }

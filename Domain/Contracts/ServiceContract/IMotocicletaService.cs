@@ -14,7 +14,7 @@ namespace CRUDFinal.Domain.Contracts.ServiceContract
         public MotocicletaVendida GetMotocicletaVendida(int id);
         public bool CheckMotocicleta(int id, bool vendida);
         public void Update(Motocicleta motoNova, int id);
-        public void UpdateVendida(Motocicleta motoNova, int id);
+        public void UpdateVendida(MotocicletaVendida motoVendidaNova, int id);
         public List<Motocicleta> List();
         public List<MotocicletaVendida> ListVenda();
         public MotocicletaVendida DownCast(Motocicleta moto, DateTime dataVenda,

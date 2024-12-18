@@ -9,53 +9,84 @@ namespace CRUDFinal.Service
 {
     public class CarroService : ICarroService
     {
-        private readonly ICarroRepository _carroRepository;
+        private readonly IRepository<Carro> _carroRepository;
+        private readonly IRepositoryVendido<CarroVendido> _carroVendidoRepository;
 
-        public CarroService(ICarroRepository carroRepository)
+        public CarroService(IRepository<Carro> carroRepository, 
+                            IRepositoryVendido<CarroVendido> carroVendidoRepository)
         {
             _carroRepository = carroRepository;
+            _carroVendidoRepository = carroVendidoRepository;
         }
 
         public void Add(Carro carro)
         {
-            // logic
+            if (carro.Marca.Length <= 2)
+            {
+                throw new ArgumentException("A marca do carro " +
+                                            "deve ter mais de 2 linhas.");
+            }
+            else if (carro.Modelo.Length <= 2)
+            {
+                throw new ArgumentException("O modelo do carro " +
+                                            "deve ter mais de 2 linhas.");
+            }
+            else if (carro.Ano < 1900)
+            {
+                throw new ArgumentException("O ano de fabricação " +
+                                            "do carro deve ser" +
+                                            "a partir do século XX.");
+            } 
             _carroRepository.Add(carro);
+            Console.WriteLine("Carro adicionado com sucesso!");
         }
 
         public void Venda(CarroVendido carroVendido)
         {
-            // logic
-            _carroRepository.AddVendido(carroVendido);
-            _carroRepository.DeleteCarro(carroVendido.ID);
+            if (carroVendido.Preco <= 0)
+            {
+                throw new ArgumentException("O preço de venda não pode" +
+                                            " ser menor ou igual a zero.");
+            }
+            else if (carroVendido.DataVenda > DateTime.Now)
+            {
+                throw new ArgumentException("Data de venda inválida.");
+            }
+            _carroVendidoRepository.AddVendido(carroVendido);
+            _carroRepository.Delete(carroVendido.ID);
         }
 
         public void Devolucao(Carro carro)
         {
-            // logic
+            if (carro.Kilometragem < 0)
+            {
+                throw new ArgumentException("Não há como a kilometragem" +
+                            " do carro ser abaixo de zero.");
+            }
             _carroRepository.Add(carro);
-            _carroRepository.DeleteCarroVendido(carro.ID);
+            _carroVendidoRepository.DeleteVendido(carro.ID);
         }
 
         public Carro GetCarro(int id)
         {
-            return _carroRepository.GetCarroVendido(id);
+            return _carroRepository.Get(id);
         }
 
         public CarroVendido GetCarroVendido(int id)
         {
-            return _carroRepository.GetCarroVendido(id);
+            return _carroVendidoRepository.GetVendido(id);
         }
 
         public bool CheckCarro(int id, bool vendido)
         {
             if (vendido == true)
             {
-                return _carroRepository.CheckCarroVendido(id) != false;
+                return _carroVendidoRepository.CheckVendido(id) != false;
             }
 
             else
             {
-                return _carroRepository.CheckCarro(id) != false;
+                return _carroRepository.Check(id) != false;
             }
         }
 
@@ -63,30 +94,76 @@ namespace CRUDFinal.Service
         {
             if (CheckCarro(id, false))
             {
+                if (carroNovo.Marca.Length <= 2)
+                {
+                    throw new ArgumentException("A marca do carro " +
+                                                "deve ter mais de 2 linhas.");
+                }
+                else if (carroNovo.Modelo.Length <= 2)
+                {
+                    throw new ArgumentException("O modelo do carro " +
+                                                "deve ter mais de 2 linhas.");
+                }
+                else if (carroNovo.Ano < 1900)
+                {
+                    throw new ArgumentException("O ano de fabricação " +
+                                                "do carro deve ser" +
+                                                "a partir do século XX.");
+                }
+                else if (carroNovo.Kilometragem < 0)
+                {
+                    throw new ArgumentException("Não há como a kilometragem" +
+                                                " do carro ser abaixo de zero.");
+                }
+
                 Carro carroOriginal = GetCarro(id);
                 _carroRepository.Update(carroNovo, carroOriginal);
                 Console.WriteLine("Carro atualizado com sucesso!");
             }
             else
             {
-                Console.WriteLine("O ID inserido não corresponde " +
-                                  "a nenhum carro.");
+                throw new ArgumentException("O ID inserido não " +
+                                            "corresponde a nenhum carro.");
             }
+
         }
 
-        public void UpdateVendido(Carro carroNovoVendido, int id)
+        public void UpdateVendido(CarroVendido carroNovoVendido, int id)
         {
             if (CheckCarro(id, true))
             {
-                Carro carroOriginalVendido = GetCarroVendido(id);
-                _carroRepository.UpdateVendido(carroNovoVendido, 
-                                               carroOriginalVendido);
+                if (carroNovoVendido.Marca.Length <= 2)
+                {
+                    throw new ArgumentException("A marca do carro " +
+                                                "deve ter mais de 2 linhas.");
+                }
+                else if (carroNovoVendido.Modelo.Length <= 2)
+                {
+                    throw new ArgumentException("O modelo do carro " +
+                                                "deve ter mais de 2 linhas.");
+                }
+                else if (carroNovoVendido.Ano < 1900)
+                {
+                    throw new ArgumentException("O ano de fabricação " +
+                                                "do carro deve ser" +
+                                                "a partir do século XX.");
+                }
+                else if (carroNovoVendido.Preco <= 0)
+                {
+                    throw new ArgumentException("O preço de venda não pode" +
+                                                " ser menor ou igual a zero.");
+                }
+
+                CarroVendido carroOriginalVendido = GetCarroVendido(id);
+                _carroVendidoRepository.UpdateVendido(carroNovoVendido, 
+                                                      carroOriginalVendido);
                 Console.WriteLine("Registro de venda atualizado com sucesso!");
             }
+
             else
             {
                 Console.WriteLine("O ID inserido não corresponde " +
-                                  "a registro de carro vendido.");
+                                  "a nenhum registro de carro vendido.");
             }
         }
 
@@ -97,7 +174,7 @@ namespace CRUDFinal.Service
 
         public List<CarroVendido> ListVenda()
         {
-            return _carroRepository.ListVenda();
+            return _carroVendidoRepository.ListVenda();
         }
 
         public CarroVendido DownCast(Carro carro, DateTime dataVenda, int preco)

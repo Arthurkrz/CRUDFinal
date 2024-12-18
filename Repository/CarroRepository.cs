@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CRUDFinal.Repository
 {
-    public class CarroRepository : ICarroRepository
+    public class CarroRepository : IRepository<Carro>, IRepositoryVendido<CarroVendido>
     {
         private static List<CarroVendido> _carrosVendidos = new List<CarroVendido>();
         private static int _carrosVendidosCounter = 1;
@@ -25,32 +25,32 @@ namespace CRUDFinal.Repository
             _carrosVendidos.Add(carroVendido);
         }
 
-        public void DeleteCarro(int id)
+        public void Delete(int id)
         {
             _carros.Remove(_carros[id]);
         }
 
-        public void DeleteCarroVendido(int id)
+        public void DeleteVendido(int id)
         {
             _carrosVendidos.Remove(_carrosVendidos[id]);
         }
 
-        public bool CheckCarroVendido(int id)
+        public bool CheckVendido(int id)
         {
             return _carrosVendidos.Any(cv => cv.ID == id);
         }
 
-        public CarroVendido GetCarroVendido(int id)
+        public CarroVendido GetVendido(int id)
         {
             return _carrosVendidos.FirstOrDefault(cv => cv.ID == id);
         }
 
-        public Carro GetCarro(int id)
+        public Carro Get(int id)
         {
             return _carros.FirstOrDefault(c => c.ID == id);
         }
 
-        public bool CheckCarro(int id)
+        public bool Check(int id)
         {
             return _carros.Any(c => c.ID == id);
         }
@@ -60,7 +60,8 @@ namespace CRUDFinal.Repository
             carroOriginal = _carros.FirstOrDefault(c => c.ID == carroNovo.ID);
         }
 
-        public void UpdateVendido(Carro carroNovoVendido, Carro carroOriginalVendido)
+        public void UpdateVendido(CarroVendido carroNovoVendido, 
+                                  CarroVendido carroOriginalVendido)
         {
             carroOriginalVendido = _carrosVendidos.FirstOrDefault
                                    (cv => cv.ID == carroNovoVendido.ID);

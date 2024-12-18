@@ -9,11 +9,17 @@ namespace CRUDFinal.Service
 {
     public class MotocicletaService : IMotocicletaService
     {
-        private readonly IMotocicletaRepository _motocicletaRepository;
+        private readonly IRepository<Motocicleta> _motocicletaRepository;
+        private readonly IRepositoryVendido<MotocicletaVendida>
+                         _motocicletaVendidaRepository;
 
-        public MotocicletaService(IMotocicletaRepository motocicletaRepository)
+        public MotocicletaService(IRepository<Motocicleta>
+                                  motocicletaRepository, 
+                                  IRepositoryVendido<MotocicletaVendida> 
+                                  motocicletaVendidaRepository)
         {
             _motocicletaRepository = motocicletaRepository;
+            _motocicletaVendidaRepository = motocicletaVendidaRepository;
         }
 
         public void Add(Motocicleta moto)
@@ -25,37 +31,39 @@ namespace CRUDFinal.Service
         public void Venda(MotocicletaVendida motoVendida)
         {
             // logic
-            _motocicletaRepository.AddVendida(motoVendida);
-            _motocicletaRepository.DeleteMotocicleta(motoVendida.ID);
+            _motocicletaVendidaRepository.AddVendido(motoVendida);
+            _motocicletaRepository.Delete(motoVendida.ID);
         }
 
         public void Devolucao(Motocicleta moto)
         {
             // logic
             _motocicletaRepository.Add(moto);
-            _motocicletaRepository.DeleteMotocicletaVendida(moto.ID);
+            _motocicletaVendidaRepository.DeleteVendido(moto.ID);
         }
 
         public Motocicleta GetMotocicleta(int id)
         {
-            return _motocicletaRepository.GetMotocicleta(id);
+            return _motocicletaRepository.Get(id);
         }
 
         public MotocicletaVendida GetMotocicletaVendida(int id)
         {
-            return _motocicletaRepository.GetMotocicletaVendida(id);
+            return _motocicletaVendidaRepository.GetVendido(id);
         }
 
         public bool CheckMotocicleta(int id, bool vendida)
         {
             if (vendida == true)
             {
-                return _motocicletaRepository.CheckMotocicletaVendida(id) != false;
+                return 
+                _motocicletaVendidaRepository.CheckVendido(id) != false;
             }
 
             else
             {
-                return _motocicletaRepository.CheckMotocicleta(id) != false;
+                return 
+                _motocicletaRepository.Check(id) != false;
             }
 
         }
@@ -74,13 +82,14 @@ namespace CRUDFinal.Service
             }
         }
 
-        public void UpdateVendida(Motocicleta motoNovaVendida, int id)
+        public void UpdateVendida(MotocicletaVendida motoNovaVendida, int id)
         {
             if (CheckMotocicleta(id, true))
             {
-                Motocicleta motoOriginalVendida = GetMotocicletaVendida(id);
-                _motocicletaRepository.UpdateVendida(motoNovaVendida,
-                                                     motoOriginalVendida);
+                MotocicletaVendida motoOriginalVendida = GetMotocicletaVendida(id);
+                _motocicletaVendidaRepository.UpdateVendido
+                                              (motoNovaVendida,
+                                               motoOriginalVendida);
             }
             else
             {
@@ -95,7 +104,7 @@ namespace CRUDFinal.Service
 
         public List<MotocicletaVendida> ListVenda()
         {
-            return _motocicletaRepository.ListVenda();
+            return _motocicletaVendidaRepository.ListVenda();
         }
 
         public MotocicletaVendida DownCast(Motocicleta moto, DateTime dataVenda, 
@@ -106,9 +115,7 @@ namespace CRUDFinal.Service
                 Marca = moto.Marca,
                 Modelo = moto.Modelo,
                 Ano = moto.Ano,
-                Tipo = moto.Tipo,
-                BemCuidado = moto.BemCuidado,
-                Kilometragem = moto.Kilometragem
+                Tipo = moto.Tipo
             };
 
             return motocicletaVendida;
